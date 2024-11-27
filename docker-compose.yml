@@ -1,0 +1,35 @@
+name: appointment_app
+version: '3.8'
+
+services:
+
+  # DATABASE DOCKER CONTAINER
+  db:
+    container_name: STB_APPOINTMENT_DATABASE
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_DEV}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
+      POSTGRES_DB: ${POSTGRES_DATABASE_DEV}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # SERVER DOCKER CONTAINER
+  web:
+    container_name: STB_APPOINTMENT_SERVER
+    restart: always
+    build: 
+      dockerfile: Dockerfile
+    volumes:
+      - .:/rails
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    tty: true 
+
+volumes:
+  postgres_data:

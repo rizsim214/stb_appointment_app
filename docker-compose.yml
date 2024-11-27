@@ -1,10 +1,10 @@
-name: appointment_app
+
 version: '3.8'
+name: stb_appointment_app
 
 services:
-
   # DATABASE DOCKER CONTAINER
-  db:
+  database:
     container_name: STB_APPOINTMENT_DATABASE
     image: postgres:latest
     restart: always
@@ -12,23 +12,29 @@ services:
       POSTGRES_USER: ${POSTGRES_USER_DEV}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
       POSTGRES_DB: ${POSTGRES_DATABASE_DEV}
+    ports:
+      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    tty: true
 
   # SERVER DOCKER CONTAINER
   web:
     container_name: STB_APPOINTMENT_SERVER
+    image: rails:latest
     restart: always
     build: 
       dockerfile: Dockerfile
     volumes:
       - .:/rails
     ports:
-      - "8081:80"
+      - "3000:80"
     depends_on:
-      - db
+      - database
     env_file:
       - .env
+    environment:
+      RAILS_ENV: development  # Set the Rails environment here
     tty: true 
 
 volumes:
